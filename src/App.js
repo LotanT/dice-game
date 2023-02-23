@@ -3,7 +3,9 @@ import PlayerDisplay from './cmps/PlayerDisplay/PlayerDisplay';
 import './App.css';
 
 function App() {
-  const [totalScore, setTotalScore] = useState({player1: 0, player2: 0})
+  const [scorePlayer1, setScorePlayer1] = useState(0)
+  const [scorePlayer2, setScorePlayer2] = useState(0)
+  const [currTurn, setCurrTurn] = useState('player1')
   const [currentScore, setCurrentScore] = useState(0)
   const [dice, setDice] = useState({dice1: '', dice2: ''})
 
@@ -15,7 +17,15 @@ function App() {
     setCurrentScore(prevState=>prevState+dice1+dice2)
   }
 
-  console.log(dice, currentScore);
+  const holdPoints = () => {
+    if(currTurn === 'player1') setScorePlayer1(prevState=>prevState + currentScore)
+    else setScorePlayer2(prevState=>prevState + currentScore)
+    setCurrentScore(0)
+    setDice({dice1: '', dice2: ''})
+    setCurrTurn(prevState=>prevState==='player1'?'player2':'player1')
+  }
+
+  console.log(dice, currentScore, scorePlayer1, scorePlayer2);
   return (
     <div className="App">
      <PlayerDisplay header={'player 2'}/>
@@ -26,7 +36,7 @@ function App() {
         <div><img alt='' src=''/></div>
       </div>
       <div onClick={rollingDice}>Roll Dice</div>
-      <div>HOLD</div>
+      <div onClick={holdPoints}>HOLD</div>
       <label>Score to win: <input/></label>
      </div>
      <PlayerDisplay header={'player 1'}/>
