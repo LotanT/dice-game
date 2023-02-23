@@ -14,14 +14,19 @@ function App() {
     const dice2 = Math.floor(Math.random() * 6)+1
     console.log(dice1, dice2);
     setDice({dice1, dice2})
-    setCurrentScore(prevState=>prevState+dice1+dice2)
+    if(dice1 === 6 && dice2 === 6) switchTurn()
+    else setCurrentScore(prevState=>prevState+dice1+dice2)
   }
 
   const holdPoints = () => {
     if(currTurn === 'player1') setScorePlayer1(prevState=>prevState + currentScore)
     else setScorePlayer2(prevState=>prevState + currentScore)
+    switchTurn()
+  }
+
+  const switchTurn = () => {
     setCurrentScore(0)
-    setDice({dice1: '', dice2: ''})
+    // setDice({dice1: '', dice2: ''})
     setCurrTurn(prevState=>prevState==='player1'?'player2':'player1')
   }
 
