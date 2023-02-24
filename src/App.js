@@ -7,7 +7,7 @@ function App() {
   const [scorePlayer2, setScorePlayer2] = useState(0)
   const [currTurn, setCurrTurn] = useState('player1')
   const [currentScore, setCurrentScore] = useState(0)
-  const [dice, setDice] = useState({dice1: '', dice2: ''})
+  const [dice, setDice] = useState({dice1: 0, dice2: 0})
 
   const rollingDice = () =>{
     const dice1 = Math.floor(Math.random() * 6)+1
@@ -39,18 +39,18 @@ function App() {
   console.log(dice, currentScore, scorePlayer1, scorePlayer2);
   return (
     <div className="App">
-     <PlayerDisplay header={'player 2'}/>
+     <PlayerDisplay header={'player 2'} score={scorePlayer2} currentScore={currTurn==='player2'?currentScore:0}/>
      <div className='board'>
       <div onClick={resetGame}>new game</div>
       <div>
-        <div><img alt='' src=''/></div>
-        <div><img alt='' src=''/></div>
+        <div className='dice'><img alt='' src={require(`../src/assets/imgs/dice-six-faces-${dice.dice1}.png`)}/></div>
+        <div className='dice'><img alt='' src={require(`../src/assets/imgs/dice-six-faces-${dice.dice2}.png`)}/></div>
       </div>
       <div onClick={rollingDice}>Roll Dice</div>
       <div onClick={holdPoints}>HOLD</div>
       <label>Score to win: <input/></label>
      </div>
-     <PlayerDisplay header={'player 1'}/>
+     <PlayerDisplay header={'player 1'} score={scorePlayer1} currentScore={currTurn==='player1'?currentScore:0}/>
     </div>
   );
 }

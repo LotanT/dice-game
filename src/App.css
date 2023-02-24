@@ -10,3 +10,9 @@
   justify-content: space-between;
   padding: 50px 10px
 }
+img{
+  height: 100%;
+}
+.dice{
+  height: 20px;
+}
