@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PlayerDisplay from './cmps/PlayerDisplay/PlayerDisplay';
 import './App.css';
 import DICE0 from '../src/assets/imgs/dice-six-faces-0.png'
@@ -15,6 +15,11 @@ function App() {
   const [currTurn, setCurrTurn] = useState('player1')
   const [currentScore, setCurrentScore] = useState(0)
   const [dice, setDice] = useState({dice1: DICE0, dice2: DICE0})
+  const [finalScore, setFinalScore ] = useState(100)
+
+  useEffect(()=>{
+    isWon()
+  },[scorePlayer1, scorePlayer2])
 
   const rollingDice = () =>{
     const dice1 = Math.floor(Math.random() * 6)+1
@@ -77,11 +82,35 @@ function App() {
     setCurrTurn(prevState=>prevState==='player1'?'player2':'player1')
   }
 
+  const updateFinalScore = (ev) => {
+    console.log(ev.target.value * 1);
+    setFinalScore(ev.target.value * 1)
+  }
+
+  const isWon = () => {
+    console.log(scorePlayer1 , finalScore);
+    if(scorePlayer1 > finalScore){
+      showAlert('PLAYER 1 WON!!')
+      resetGame()
+    }else if(scorePlayer2 > finalScore){
+      showAlert('PLAYER 2 WON!!')
+      resetGame()
+    }
+  }
+
+  const showAlert = (txt) => {
+    setTimeout(() => {
+      alert(txt)
+    }, 200);
+  }
+
   const resetGame = () => {
-    setScorePlayer1(0)
-    setScorePlayer2(0)
-    setCurrentScore(0)
-    setCurrTurn('player1')
+    setTimeout(() => {
+      setScorePlayer1(0)
+      setScorePlayer2(0)
+      setCurrentScore(0)
+      setCurrTurn('player1')
+    }, 200);
   }
 
   console.log(dice, currentScore, scorePlayer1, scorePlayer2);
@@ -96,7 +125,7 @@ function App() {
       </div>
       <div onClick={rollingDice} className='button'>ROLL DICE</div>
       <div onClick={holdPoints} className='button'>HOLD</div>
-      <label>Score to win: <input placeholder='FINAL SCORE' defaultValue='100'/></label>
+      <label>Score to win: <input type='number' placeholder='FINAL SCORE' defaultValue='100' onChange={updateFinalScore}/></label>
      </div>
      <PlayerDisplay header={'PLAYER 1'} score={scorePlayer1} currentScore={currTurn==='player1'?currentScore:0}/>
     </div>
