@@ -12,10 +12,28 @@ import DICE6 from '../src/assets/imgs/dice-six-faces-6.png'
 function App() {
   const [scorePlayer1, setScorePlayer1] = useState(0)
   const [scorePlayer2, setScorePlayer2] = useState(0)
+  const [victories1, setVictories1] = useState(0)
+  const [victories2, setVictories2] = useState(0)
   const [currTurn, setCurrTurn] = useState('player1')
   const [currentScore, setCurrentScore] = useState(0)
   const [dice, setDice] = useState({dice1: DICE0, dice2: DICE0})
   const [finalScore, setFinalScore ] = useState(100)
+  const STORAGE_KEY = 'gameDiceScore'
+
+  useEffect(()=>{
+    const data = getFromLocalStorage(STORAGE_KEY)
+    console.log(data);
+    if(data){
+      setVictories1(data.player1)
+      setVictories2(data.player2)
+    }
+  },[])
+
+  useEffect(()=>{
+    if(victories1 || victories2){
+      saveToLocalStorage({player1: victories1, player2: victories2}, STORAGE_KEY)
+    }
+  },[victories1, victories2])
 
   useEffect(()=>{
     isWon()
@@ -66,7 +84,10 @@ function App() {
         break;
     }
     setDice(dice)
-    if(dice1 === 6 && dice2 === 6) switchTurn()
+    if(dice1 === 6 && dice2 === 6){
+      showAlert('You got 6 6 :(')
+      switchTurn()
+    } 
     else setCurrentScore(prevState=>prevState+dice1+dice2)
   }
 
@@ -89,19 +110,23 @@ function App() {
 
   const isWon = () => {
     console.log(scorePlayer1 , finalScore);
-    if(scorePlayer1 > finalScore){
+    if(scorePlayer1 >= finalScore){
       showAlert('PLAYER 1 WON!!')
+      setVictories1(prevState=>prevState+1)
       resetGame()
-    }else if(scorePlayer2 > finalScore){
+      // saveToLocalStorage({player1: victories1, player2: victories2}, STORAGE_KEY)
+    }else if(scorePlayer2 >= finalScore){
       showAlert('PLAYER 2 WON!!')
+      setVictories2(prevState=>prevState+1)
       resetGame()
+      // saveToLocalStorage({player1: victories1, player2: victories2}, STORAGE_KEY)
     }
   }
 
   const showAlert = (txt) => {
     setTimeout(() => {
       alert(txt)
-    }, 200);
+    }, 0);
   }
 
   const resetGame = () => {
@@ -113,10 +138,20 @@ function App() {
     }, 200);
   }
 
-  console.log(dice, currentScore, scorePlayer1, scorePlayer2);
+  const saveToLocalStorage = (data, key) => {
+    data = JSON.stringify(data)
+    console.log(data);
+    localStorage.setItem(key, data)
+  }
+
+  const getFromLocalStorage = (key) => {
+    return JSON.parse(localStorage.getItem(key))
+  }
+
+  // console.log(dice, currentScore, scorePlayer1, scorePlayer2);
   return (
     <div className="App">
-     <PlayerDisplay header={'PLAYER  2'} score={scorePlayer2} currentScore={currTurn==='player2'?currentScore:0}/>
+     <PlayerDisplay header={'PLAYER  2'} score={scorePlayer2} currentScore={currTurn==='player2'?currentScore:0} turn={currTurn} victories={victories2}/>
      <div className='board'>
       <div onClick={resetGame} className='button'>NEW GAME</div>
       <div>
@@ -127,7 +162,7 @@ function App() {
       <div onClick={holdPoints} className='button'>HOLD</div>
       <label>Score to win: <input type='number' placeholder='FINAL SCORE' defaultValue='100' onChange={updateFinalScore}/></label>
      </div>
-     <PlayerDisplay header={'PLAYER 1'} score={scorePlayer1} currentScore={currTurn==='player1'?currentScore:0}/>
+     <PlayerDisplay header={'PLAYER 1'} score={scorePlayer1} currentScore={currTurn==='player1'?currentScore:0} turn={currTurn} victories={victories1}/>
     </div>
   );
 }

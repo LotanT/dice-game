@@ -18,3 +18,8 @@
 .current-score{
     font-weight: 700;
 }
+.turn{
+    background-color: red;
+    border-radius: 5px;
+    width: 200px;
+}
